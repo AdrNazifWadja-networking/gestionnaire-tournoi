@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire de Tournoi Foot Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; text-align: center; color: #333; }
+        .screen { display: none; max-width: 950px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .active { display: block; }
+        input, button, select { padding: 8px; margin: 5px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; }
+        button { background: #28a745; color: white; cursor: pointer; border: none; font-weight: bold; }
+        button:hover { background: #218838; }
+        .poule-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px; }
+        .poule-card { background: #e9ecef; padding: 15px; border-radius: 5px; min-width: 280px; text-align: left; }
+        .form-section { background: #f8f9fa; border: 1px solid #ddd; padding: 15px; margin: 15px 0; border-radius: 5px; text-align: left; }
+        .player-row { display: flex; gap: 10px; margin-bottom: 5px; flex-wrap: wrap; align-items: center; }
+        .modal { display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; box-shadow: 0 0 20px rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; z-index: 10; max-height: 80vh; overflow-y: auto; width: 500px; }
+        .overlay { display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index: 5; }
+        .field { background: #2e7d32; width: 340px; height: 460px; margin: 20px auto; border: 2px white solid; border-radius: 10px; position: relative; }
+        .field-line { position: absolute; width: 100%; height: 2px; background: white; top: 50%; }
+        .field-circle { position: absolute; width: 80px; height: 80px; border: 2px solid white; border-radius: 50%; top: calc(50% - 40px); left: calc(50% - 40px); }
+        .pos { position: absolute; background: rgba(0,0,0,0.7); color: white; padding: 2px 5px; border-radius: 3px; font-size: 11px; text-align: center; width: 65px; transform: translateX(-50%); }
+    </style>
+</head>
+<body>
+
+    <h1>⚽ Tournoi Foot Ultimate Manager ⚽</h1>
+
+    <div id="screen-config" class="screen active">
+        <h3>Configuration Générale</h3>
+        <label>Nombre d'équipes :</label>
+        <input type="number" id="nb-teams" value="4" min="4" max="32">
+        <label>Nombre d'arbitres :</label>
+        <input type="number" id="nb-referees" value="3" min="1"><br><br>
+        <button onclick="genererChampsConfig()">Suivant : Enregistrement des acteurs</button>
+    </div>
+
+    <div id="screen-details" class="screen">
+        <h3>Gestion des Acteurs du Tournoi</h3>
+        <div id="arbitres-container" class="form-section"><h4>👮 Liste des Arbitres</h4></div>
+        <div id="clubs-container"></div>
+        <button onclick="lancerTirageAuSort()">Lancer le Tirage au Sort & les Poules</button>
+    </div>
+
+    <div id="screen-poules" class="screen">
+        <h3>Phase de Poules & Gestion des Événements</h3>
+        <div id="poules-display" class="poule-container"></div>
+        <hr>
+        <h3>Matchs de Poule</h3>
+        <div id="matchs-display"></div>
+        <button onclick="genererPhaseFinale()">Passer à la Phase Finale</button>
+    </div>
+
+    <div id="screen-tree" class="screen">
+        <h3>🏆 Arbre de la Phase Finale 🏆</h3>
+        <div id="tree-container" style="display: flex; justify-content: space-around; align-items: center; margin-top: 30px; gap: 20px;"></div>
+        <div id="champion-display" style="margin-top: 30px; font-size: 24px; color: #d4af37; font-weight: bold;"></div>
+        <br>
+        <button id="btn-recompenses" style="display:none;" onclick="afficherPalmaresFin()">🥇 Voir les Récompenses du Tournoi</button>
+    </div>
+
+    <div id="screen-rewards" class="screen">
+        <h3>🏆 Récompenses individuelles & 11 Type 🏆</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; text-align: left;">
+            <div class="poule-card" style="flex: 1; min-width: 300px;" id="individual-awards"></div>
+            <div class="poule-card" style="width: 380px; text-align: center;">
+                <h4>🏃‍♂️ Le 11 Type du Tournoi</h4>
+                <div class="field" id="football-field"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay-match" class="overlay"></div>
+    <div id="modal-match" class="modal">
+        <h4 id="modal-match-title">Événements du match</h4>
+        <div id="modal-events-content"></div>
+        <button onclick="fermerModalMatch()">Valider les événements</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
